@@ -38,7 +38,6 @@ def eval_genome(genome, config):
     is_forward = None
     while time.time()-sim_time < simulation_seconds:
         inputs = lidar.lidar_20(False)
-        print(inputs)
         action = net.activate(inputs)
         # Apply action to the simulated cart-pole
         if(action[0]>0):
