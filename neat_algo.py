@@ -53,7 +53,7 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-        fitness = lidar.dist
+    fitness = lidar.dist()
 
     fitnesses.append(fitness)
 

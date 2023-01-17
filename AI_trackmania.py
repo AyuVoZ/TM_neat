@@ -103,8 +103,6 @@ class Lidar:
             index = np.float32(index)
             distances.append(index)
         speed = img[1005:1035, 1700:1780]
-        dist_img = img[1005:1035, 1780:1880]
-        self.dist = analyse(dist_img)
         speed_value = analyse(speed)
         distances.append(np.float32(speed_value/125-1))
         res = np.array(distances, dtype=np.float32)
@@ -112,3 +110,8 @@ class Lidar:
             cv2.imshow("img",img)
             cv2.waitKey(0)
         return res
+
+    def dist(self):
+        img = d.screenshot()
+        dist_img = img[1005:1035, 1780:1880]
+        return analyse(dist_img)
