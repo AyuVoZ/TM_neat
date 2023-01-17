@@ -3,6 +3,8 @@ import math
 import numpy as np
 import d3dshot
 import time
+import pytesseract
+import re
 
 time.sleep(2)
 #get image
@@ -36,6 +38,15 @@ def armin(tab):
         return nz[0].item()
     else:
         return len(tab) - 1
+
+def analyse(img):
+    text = pytesseract.image_to_string(img, lang = 'eng', config='--psm 8 -c tessedit_char_whitelist=0123456789.')
+    text = re.sub(r'[^\d.]', "", text)
+    if text.replace('.','',1).isnumeric():
+        # print(text)
+        return(float(text))
+    else:
+        return(0)
 
 class Lidar:
     def __init__(self):
@@ -88,8 +99,13 @@ class Lidar:
             index = armin(np.all(img[axis_x, axis_y] < self.black_threshold, axis=1))
             if show:
                 img = cv2.line(img, (self.road_point[1], self.road_point[0]), (axis_y[index], axis_x[index]), color, thickness)
+            index = index/682-1
             index = np.float32(index)
             distances.append(index)
+        speed = img[1005:1035, 1700:1780]
+        dist_img = img[1005:1035, 1780:1880]
+        self.dist = analyse(dist_img)
+        distances.append(np.float32(analyse(speed)))
         res = np.array(distances, dtype=np.float32)
         if show:
             cv2.imshow("img",img)

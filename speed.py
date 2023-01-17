@@ -8,7 +8,7 @@ start_time = time.time()
 time.sleep(2)
 
 d = d3dshot.create(capture_output="numpy")
-d.display = d.displays[1]
+d.display = d.displays[0]
 
 def analyse(img):
     text = pytesseract.image_to_string(img, lang = 'eng', config='--psm 8 -c tessedit_char_whitelist=0123456789.')
@@ -24,13 +24,9 @@ while True:
     time.sleep(0.1)
     #get image
     img = d.screenshot()
-    accel = img[710:730, 1845:1885]
-    deccel = img[910:935, 1845:1890]
-    speed = img[950:1000, 1605:1680]
-    turn = img[950:1000, 1710:1790]
+    speed = img[1005:1035, 1700:1780]
+    dist = img[1005:1035, 1780:1880]
 
     print(f"Generated at time {time.time()- start_time}")
-    print(f"Acceleration : {analyse(accel)}")
-    #print(f"Decceleration : {analyse(deccel)}")
-    #print(f"Turn : {analyse(turn)}")
     print(f"Speed : {analyse(speed)}")
+    print(f"Dist : {analyse(dist)}")

@@ -40,7 +40,6 @@ def eval_genome(genome, config):
         inputs = lidar.lidar_20(False)
         print(inputs)
         action = net.activate(inputs)
-        print(action)
         # Apply action to the simulated cart-pole
         if(action[0]>0):
             if(not is_forward):
@@ -55,7 +54,7 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-        fitness = time.time()-sim_time
+        fitness = lidar.dist
 
     fitnesses.append(fitness)
 
