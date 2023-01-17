@@ -116,4 +116,6 @@ class Lidar:
     def dist(self):
         img = d.screenshot()
         dist_img = img[1005:1035, 1780:1880]
-        return analyse(dist_img)
+        res = analyse(dist_img)
+        print(f"Distance at time {time.ctime()} : {res}".format())
+        return res
