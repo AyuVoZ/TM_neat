@@ -7,7 +7,6 @@ import time
 time.sleep(2)
 #get image
 d = d3dshot.create(capture_output="numpy")
-img = d.screenshot()
 
 # read image
 #img = cv2.imread("trackmania.png")
@@ -39,7 +38,8 @@ def armin(tab):
         return len(tab) - 1
 
 class Lidar:
-    def __init__(self, im):
+    def __init__(self):
+        im = d.screenshot()
         self._set_axis_lidar(im)
         self.black_threshold = [55,55,55]
 
@@ -74,7 +74,8 @@ class Lidar:
         self.list_axis_x = list_ax_x
         self.list_axis_y = list_ax_y
 
-    def lidar_20(self, img, show=False):
+    def lidar_20(self, show=False):
+        img = d.screenshot()
         h, w, _ = img.shape
         if h != self.h or w != self.w:
             self._set_axis_lidar(img)
@@ -94,7 +95,3 @@ class Lidar:
             cv2.imshow("img",img)
             cv2.waitKey(0)
         return res
-
-lidar = Lidar(img)
-input("GO")
-lidar.lidar_20(img, True)
