@@ -105,7 +105,8 @@ class Lidar:
         speed = img[1005:1035, 1700:1780]
         dist_img = img[1005:1035, 1780:1880]
         self.dist = analyse(dist_img)
-        distances.append(np.float32(analyse(speed)))
+        speed_value = analyse(speed)
+        distances.append(np.float32(speed_value/125-1))
         res = np.array(distances, dtype=np.float32)
         if show:
             cv2.imshow("img",img)
