@@ -56,16 +56,15 @@ def eval_genome(genome, config):
     # Run the given simulation for up to num_steps time steps.
     sim_time = time.time()
     fitness = 0.0
-    keyboard.press('backspace')
-    keyboard.release('backspace')
+    keyboard.press('delete')
+    keyboard.release('delete')
     is_forward = None
     while time.time()-sim_time < simulation_seconds:
         inputs = lidar.lidar_20(False)
         speed_raw = data['speed']
         speed_raw = speed_raw/200-1
         speed = np.float32(speed_raw)
-        print(speed)
-        inputs.append(speed)
+        inputs = np.append(inputs, speed)
         inputs = np.array(inputs, dtype=np.float32)
         action = net.activate(inputs)
         # Apply action to the simulated cart-pole
@@ -83,7 +82,6 @@ def eval_genome(genome, config):
         gamepad.update()
 
     fitness = data['distance']
-    print(fitness)
 
     # The genome's fitness is its worst performance across all runs.
     return fitness
