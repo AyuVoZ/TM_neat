@@ -1,7 +1,5 @@
-#name "TMRL grab data "
-#author "tmrl team"
-#category "TMRL"
-
+uint _curCP = 0;
+int _lastCPTime = 0;
 
 bool send_data_float(Net::Socket@ sock, float val)
 {
@@ -48,7 +46,29 @@ void Main()
 			CSmScriptPlayer@ api = cast<CSmScriptPlayer>(player.ScriptAPI);
 
 			auto race_state = playground.GameTerminals[0].UISequence_Current;
-			
+
+
+
+			if(PlayerState::GetRaceData().PlayerState == PlayerState::EPlayerState::EPlayerState_Driving) {
+			auto info = PlayerState::GetRaceData().dPlayerInfo;
+			_curCP = info.NumberOfCheckpointsPassed;
+			if(info.LatestCPTime > 0) {
+				// LatestCPTime currently only exists for 1 frame
+				_lastCPTime = info.LatestCPTime;
+			}
+			} else {
+				_curCP = 0;
+				_lastCPTime = 0;
+			}
+
+			// print("Current Race Time");
+			// print(api.CurrentRaceTime);
+			// print("Current CP");
+			// print(_curCP);
+			// print("Last CP Time");
+			// print(_lastCPTime);
+
+				
 			// Sending data
 			cc = send_data_float(sock, api.Speed);
 			send_data_float(sock, api.Distance);
@@ -57,6 +77,10 @@ void Main()
 				send_data_float(sock, 1.0f);
 			}
 			else send_data_float(sock, 0.0f);
+
+			send_data_float(sock, _curCP);
+			send_data_float(sock, _lastCPTime);
+			send_data_float(sock, api.CurrentRaceTime);			
 
 			yield();  // this statement stops the script until the next frame
 		}

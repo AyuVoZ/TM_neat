@@ -1,0 +1,7 @@
+[meta]
+name        = "Grab Data Plugin"
+author      = "Nwen"
+category    = "Testing"
+
+[script]
+optional_dependencies = [ "PlayerState" ]
