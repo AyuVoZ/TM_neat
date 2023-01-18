@@ -34,6 +34,9 @@ def get_data(s):
         data['speed'] = unpack(b'@f', s.recv(4))[0] # speed
         data['distance'] = unpack(b'@f', s.recv(4))[0] # distance
         data['finish'] = unpack(b'@f', s.recv(4))[0] # finish
+        data['curCP'] = unpack(b'@f', s.recv(4))[0] # finish
+        data['lastCPTime'] = unpack(b'@f', s.recv(4))[0] # finish
+        data['curRaceTime'] = unpack(b'@f', s.recv(4))[0] # finish
         return data
 
 # function that captures data from openplanet    
