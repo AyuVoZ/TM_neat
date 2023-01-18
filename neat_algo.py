@@ -89,17 +89,10 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-        #Get CP1 Time
-        if(data['curCP'] == 1 and cp1_passed == False):
-            cp1_passed = True
-            cp1_time = data["curRaceTime"]
-
-    if(data['curCP'] == 1):
-        fitness = data['lastCPTime']
-    elif(data['curCP'] >= 2):
-        fitness = cp1_time
+    if(data['curCP'] >= 1):
+        fitness = data['distance']*data['curCP']
     else:
-        fitness = data["curRaceTime"]
+        fitness = data["distance"]
 
     # print(f"[{time.ctime()}] Fitness : {fitness}")
 
