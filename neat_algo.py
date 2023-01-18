@@ -19,7 +19,7 @@ import vgamepad as vg
 
 import AI_trackmania
 
-simulation_seconds = 5.0
+simulation_seconds = 13.0
 time.sleep(2)
 #get image
 lidar = AI_trackmania.Lidar()
@@ -101,7 +101,7 @@ def eval_genome(genome, config):
     else:
         fitness = data["curRaceTime"]
 
-    print(f"[{time.ctime()}] Fitness : {fitness}")
+    # print(f"[{time.ctime()}] Fitness : {fitness}")
 
     # The genome's fitness is its worst performance across all runs.
     return fitness

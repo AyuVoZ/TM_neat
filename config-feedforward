@@ -10,7 +10,7 @@ reset_on_extinction   = 0
 
 [DefaultGenome]
 num_inputs              = 20
-num_hidden              = 5
+num_hidden              = 4
 num_outputs             = 2
 feed_forward            = True
 compatibility_disjoint_coefficient    = 1.0
