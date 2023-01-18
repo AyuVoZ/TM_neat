@@ -3,8 +3,6 @@ import math
 import numpy as np
 import d3dshot
 import time
-import pytesseract
-import re
 
 time.sleep(2)
 #get image
@@ -94,11 +92,6 @@ class Lidar:
             index = index/682-1
             index = np.float32(index)
             distances.append(index)
-        # speed = img[1005:1035, 1700:1780]
-        # speed_value = analyse(speed)
-        # if(speed_value>250):
-        #     speed_value=250
-        # distances.append(np.float32(speed_value/125-1))
         res = np.array(distances, dtype=np.float32)
         if show:
             cv2.imwrite(str(self.index) + ".png", img)
