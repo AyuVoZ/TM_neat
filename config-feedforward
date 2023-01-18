@@ -4,13 +4,13 @@
 # or the experiment itself.  This is the only required section.
 [NEAT]
 fitness_criterion     = max
-fitness_threshold     = 500
-pop_size              = 100
+fitness_threshold     = 5000
+pop_size              = 150
 reset_on_extinction   = 0
 
 [DefaultGenome]
 num_inputs              = 20
-num_hidden              = 4
+num_hidden              = 2
 num_outputs             = 2
 feed_forward            = True
 compatibility_disjoint_coefficient    = 1.0
@@ -19,12 +19,12 @@ conn_add_prob           = 0.3
 conn_delete_prob        = 0.3
 node_add_prob           = 0.3
 node_delete_prob        = 0.3
-initial_connection      = partial_nodirect 0.5
+initial_connection      = partial_direct 0.5
 activation_default      = tanh
 activation_options      = tanh
 activation_mutate_rate  = 0.0
-aggregation_default     = median
-aggregation_options     = median
+aggregation_default     = sum
+aggregation_options     = sum
 aggregation_mutate_rate = 0.0
 bias_init_mean          = 0.0
 bias_init_stdev         = 1.0
