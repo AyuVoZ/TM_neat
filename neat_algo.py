@@ -59,6 +59,11 @@ def eval_genome(genome, config):
     keyboard.press('backspace')
     keyboard.release('backspace')
     is_forward = None
+
+    cp1_passed = False
+    cp1_time = 0
+    
+
     while time.time()-sim_time < simulation_seconds:
         inputs = lidar.lidar_20(False)
         speed_raw = data['speed']
@@ -82,8 +87,19 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-    fitness = data['distance']
-    print(fitness)
+        #Get CP1 Time
+        if(data['curCP'] == 1 and cp1_passed == False):
+            cp1_passed = True
+            cp1_time = data["curRaceTime"]
+
+    if(data['curCP'] == 1):
+        fitness = data['lastCPTime']
+    elif(data['curCP'] >= 2):
+        fitness = cp1_time
+    else:
+        fitness = data["curRaceTime"]
+
+    print(f"[{time.ctime()}] Fitness : {fitness}")
 
     # The genome's fitness is its worst performance across all runs.
     return fitness
