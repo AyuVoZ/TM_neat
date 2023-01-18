@@ -4,7 +4,7 @@
 # or the experiment itself.  This is the only required section.
 [NEAT]
 fitness_criterion     = min
-fitness_threshold     = 3900
+fitness_threshold     = 9000
 pop_size              = 100
 reset_on_extinction   = 0
 
