@@ -52,23 +52,11 @@ void Main()
 			// Sending data
 			cc = send_data_float(sock, api.Speed);
 			send_data_float(sock, api.Distance);
-			send_data_float(sock, api.Position.x);
-			send_data_float(sock, api.Position.y);
-			send_data_float(sock, api.Position.z);
-			send_data_float(sock, api.InputSteer);
-			send_data_float(sock, api.InputGasPedal);
-			if(api.InputIsBraking) send_data_float(sock, 1.0f);
+			if(race_state == SGamePlaygroundUIConfig::EUISequence::Finish) 
+			{
+				send_data_float(sock, 1.0f);
+			}
 			else send_data_float(sock, 0.0f);
-			// old code: if(race_state == ESGamePlaygroundUIConfig__EUISequence::Finish) send_data_float(sock, 1.0f);
-			// can use CGamePlaygroundUIConfig::EUISequence::Finish or CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish
-			if(race_state == CGamePlaygroundUIConfig::EUISequence::Finish) send_data_float(sock, 1.0f);
-			else send_data_float(sock, 0.0f);
-			send_data_float(sock, api.EngineCurGear);
-			send_data_float(sock, api.EngineRpm);
-			print(api.Speed)
-			print(api.Distance)
-			
-			send_data_float(sock,race.Finished);
 
 			yield();  // this statement stops the script until the next frame
 		}
