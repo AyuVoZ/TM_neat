@@ -7,7 +7,7 @@ import time
 time.sleep(2)
 #get image
 d = d3dshot.create(capture_output="numpy")
-
+d.display = d.displays[0]
 # read image
 #img = cv2.imread("trackmania.png")
 
