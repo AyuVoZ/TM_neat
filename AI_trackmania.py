@@ -39,20 +39,12 @@ def armin(tab):
     else:
         return len(tab) - 1
 
-def analyse(img):
-    text = pytesseract.image_to_string(img, lang = 'eng', config='--psm 8 -c tessedit_char_whitelist=0123456789.')
-    text = re.sub(r'[^\d.]', "", text)
-    if text.replace('.','',1).isnumeric():
-        # print(text)
-        return(float(text))
-    else:
-        return(0)
-
 class Lidar:
     def __init__(self):
         im = d.screenshot()
         self._set_axis_lidar(im)
         self.black_threshold = [55,55,55]
+        self.index = 0
 
     def _set_axis_lidar(self, im):
         h, w, _ = im.shape
@@ -102,18 +94,18 @@ class Lidar:
             index = index/682-1
             index = np.float32(index)
             distances.append(index)
-        speed = img[1005:1035, 1700:1780]
-        speed_value = analyse(speed)
-        if(speed_value>250):
-            speed_value=250
-        distances.append(np.float32(speed_value/125-1))
+        # speed = img[1005:1035, 1700:1780]
+        # speed_value = analyse(speed)
+        # if(speed_value>250):
+        #     speed_value=250
+        # distances.append(np.float32(speed_value/125-1))
         res = np.array(distances, dtype=np.float32)
         if show:
-            cv2.imshow("img",img)
-            cv2.waitKey(0)
+            cv2.imwrite(str(self.index) + ".png", img)
+            self.index += 1
         return res
 
-    def dist(self):
-        img = d.screenshot()
-        dist_img = img[1005:1035, 1780:1880]
-        return analyse(dist_img)
+# lidar = Lidar()
+# time.sleep(2)
+# for i in range(300):
+#     lidar.lidar_20(True)

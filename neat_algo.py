@@ -16,8 +16,7 @@ import vgamepad as vg
 import AI_trackmania
 
 runs_per_net = 5
-simulation_seconds = 23.0
-
+simulation_seconds = 13.0
 time.sleep(2)
 #get image
 lidar = AI_trackmania.Lidar()
