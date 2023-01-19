@@ -4,6 +4,7 @@ import time
 import neat
 import visualize
 import numpy as np
+import sys
 
 #Control car and environement
 import keyboard
@@ -21,6 +22,9 @@ gamepad = vg.VX360Gamepad()
 # start the thread
 get_data.start_thread()
 
+DEBUG = False
+local_dir = os.path.dirname(__file__)
+CONFIG_PATH = os.path.join(local_dir, 'config-feedforward')
 
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
@@ -59,7 +63,8 @@ def eval_genome(genome, config):
 
     fitness = get_data.data['distance']*(get_data.data['curCP']+1)
 
-    # print(f"[{time.ctime()}] Fitness : {fitness}")
+    if DEBUG: 
+        print(f"[{time.ctime()}] Fitness : {fitness}")
 
     # The genome's fitness is its worst performance across all runs.
     return fitness
@@ -73,11 +78,9 @@ def eval_genomes(genomes, config):
 def run():
     # Load the config file, which is assumed to live in
     # the same directory as this script.
-    local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'config-feedforward')
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                         config_path)
+                         CONFIG_PATH)
 
     pop = neat.Population(config)
     stats = neat.StatisticsReporter()
@@ -107,4 +110,12 @@ def run():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        for i in range(1, len(sys.argv)):
+            if sys.argv[i] == '-d':
+                DEBUG = True
+                print("DEBUG MODE ON")
+            elif sys.argv[i] == '-config':
+                CONFIG_PATH = os.path.join(local_dir, sys.argv[i+1]) 
+                print(f"Using config file {CONFIG_PATH}")
     run()
