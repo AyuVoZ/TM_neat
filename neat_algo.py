@@ -95,6 +95,7 @@ def run():
     pop.add_reporter(checkpointer)
 
     winner = pop.run(eval_genomes, 200)
+    checkpointer.save_checkpoint(config, pop.population, pop.species, pop.generation)
 
     # Save the winner.
     with open('winner-feedforward', 'wb') as f:
