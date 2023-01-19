@@ -1,55 +1,25 @@
-"""
-Single-pole balancing experiment using a feed-forward neural network.
-"""
-
-from __future__ import print_function
-
 import os
 import pickle
 import time
 import neat
 import visualize
-import socket
-import threading
-from struct import unpack
 import numpy as np
 
+#Control car and environement
 import keyboard
 import vgamepad as vg
 
-import AI_trackmania
+#import other files
+import Lidar
+import get_data
 
+#Init variable for the simulation
 simulation_seconds = 13.0
-time.sleep(2)
-#get image
-lidar = AI_trackmania.Lidar()
+lidar = Lidar.Lidar()
 gamepad = vg.VX360Gamepad()
 
-#Start a thread to get the data
-data = {}
-
-def get_data(s):
-        data = dict()
-        #data['time'] = time.ctime()
-        data['speed'] = unpack(b'@f', s.recv(4))[0] # speed
-        data['distance'] = unpack(b'@f', s.recv(4))[0] # distance
-        data['finish'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['curCP'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['lastCPTime'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['curRaceTime'] = unpack(b'@f', s.recv(4))[0] # finish
-        return data
-
-# function that captures data from openplanet    
-def data_getter_function():
-        global data
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect(("127.0.0.1", 9000))
-                while True:
-                        data = get_data(s)
-
 # start the thread
-data_getter_thread = threading.Thread(target=data_getter_function, daemon=True)
-data_getter_thread.start()
+get_data.start_thread()
 
 
 # Use the NN network phenotype and the discrete actuator force function.
@@ -59,23 +29,21 @@ def eval_genome(genome, config):
     # Run the given simulation for up to num_steps time steps.
     sim_time = time.time()
     fitness = 0.0
+    #restart race
     keyboard.press('delete')
     keyboard.release('delete')
     is_forward = None
 
-    cp1_passed = False
-    cp1_time = 0
-    
-
     while time.time()-sim_time < simulation_seconds:
         inputs = lidar.lidar_20(False)
-        speed_raw = data['speed']
+        speed_raw = get_data.data['speed']
         speed_raw = speed_raw/200-1
         speed = np.float32(speed_raw)
         inputs = np.append(inputs, speed)
         inputs = np.array(inputs, dtype=np.float32)
         action = net.activate(inputs)
-        # Apply action to the simulated cart-pole
+        
+        # Apply action to the game
         if(action[0]>0):
             if(not is_forward):
                 gamepad.left_trigger_float(value_float=0)
@@ -89,7 +57,7 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-    fitness = data['distance']*(data['curCP']+1)
+    fitness = get_data.data['distance']*(get_data.data['curCP']+1)
 
     # print(f"[{time.ctime()}] Fitness : {fitness}")
 

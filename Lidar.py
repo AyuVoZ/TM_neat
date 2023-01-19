@@ -4,31 +4,9 @@ import numpy as np
 import d3dshot
 import time
 
-time.sleep(2)
 #get image
 d = d3dshot.create(capture_output="numpy")
 d.display = d.displays[0]
-# read image
-#img = cv2.imread("trackmania.png")
-
-# median blur
-# median = cv2.medianBlur(img, 5)
-
-# # threshold on black
-# lower = (0,0,0)
-# upper = (20,20,20)
-# thresh = cv2.inRange(median, lower, upper)
-
-# # save result
-# cv2.imwrite("black_lines_threshold.jpg", thresh)
-
-# # view result
-# cv2.imshow("image", thresh)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-# while True:
-#     pass
 
 def armin(tab):
     nz = np.nonzero(tab)[0]
@@ -46,8 +24,7 @@ class Lidar:
 
     def _set_axis_lidar(self, im):
         h, w, _ = im.shape
-        self.h = h
-        self.w = w
+        #get base point just above the timer in the middle
         self.road_point = (44*h//49, w//2)
         min_dist = 20
         list_ax_x = []
@@ -77,9 +54,6 @@ class Lidar:
 
     def lidar_20(self, show=False):
         img = d.screenshot()
-        h, w, _ = img.shape
-        if h != self.h or w != self.w:
-            self._set_axis_lidar(img)
         distances = []
         if show:
             color = (255, 0, 0)
@@ -89,16 +63,19 @@ class Lidar:
             index = armin(np.all(img[axis_x, axis_y] < self.black_threshold, axis=1))
             if show:
                 img = cv2.line(img, (self.road_point[1], self.road_point[0]), (axis_y[index], axis_x[index]), color, thickness)
+            
+            #normalize between -1 and 1
             index = index/682-1
             index = np.float32(index)
             distances.append(index)
         res = np.array(distances, dtype=np.float32)
         if show:
-            cv2.imwrite(str(self.index) + ".png", img)
+            cv2.imshow("Lidar", img)
             self.index += 1
         return res
 
-# lidar = Lidar()
-# time.sleep(2)
-# for i in range(300):
-#     lidar.lidar_20(True)
+#get multiple screen shots
+lidar = Lidar()
+time.sleep(2)
+for i in range(300):
+    lidar.lidar_20(True)
