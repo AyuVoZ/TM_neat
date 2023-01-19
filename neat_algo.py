@@ -15,7 +15,6 @@ import Lidar
 import get_data
 
 #Init variable for the simulation
-simulation_seconds = 13.0
 lidar = Lidar.Lidar()
 gamepad = vg.VX360Gamepad()
 
@@ -24,7 +23,8 @@ get_data.start_thread()
 
 DEBUG = False
 local_dir = os.path.dirname(__file__)
-CONFIG_PATH = os.path.join(local_dir, 'config-feedforward')
+CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-start-hidden-2')
+SIMULATION_TIME = 20.0
 
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
@@ -118,4 +118,7 @@ if __name__ == '__main__':
             elif sys.argv[i] == '-config':
                 CONFIG_PATH = os.path.join(local_dir, sys.argv[i+1]) 
                 print(f"Using config file {CONFIG_PATH}")
+            elif sys.argv[i] == "-time":
+                SIMULATION_TIME = float(sys.argv[i+1])
+
     run()

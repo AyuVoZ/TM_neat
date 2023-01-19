@@ -74,8 +74,8 @@ class Lidar:
             self.index += 1
         return res
 
-#get multiple screen shots
-lidar = Lidar()
-time.sleep(2)
-for i in range(300):
-    lidar.lidar_20(True)
+# #get multiple screen shots
+# lidar = Lidar()
+# time.sleep(2)
+# for i in range(300):
+#     lidar.lidar_20(True)
