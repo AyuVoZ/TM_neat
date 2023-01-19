@@ -25,6 +25,7 @@ DEBUG = False
 local_dir = os.path.dirname(__file__)
 CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-start-hidden-2')
 SIMULATION_TIME = 20.0
+RELOAD_PATH = None
 
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
@@ -38,7 +39,7 @@ def eval_genome(genome, config):
     keyboard.release('delete')
     is_forward = None
 
-    while time.time()-sim_time < simulation_seconds:
+    while time.time()-sim_time < SIMULATION_TIME:
         inputs = lidar.lidar_20(False)
         speed_raw = get_data.data['speed']
         speed_raw = speed_raw/200-1
@@ -82,10 +83,16 @@ def run():
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          CONFIG_PATH)
 
-    pop = neat.Population(config)
+    pop = None
+    if(RELOAD_PATH != None):
+        pop = neat.Checkpointer.restore_checkpoint(RELOAD_PATH)
+    else:
+        pop = neat.Population(config)
     stats = neat.StatisticsReporter()
     pop.add_reporter(stats)
     pop.add_reporter(neat.StdOutReporter(True))
+    checkpointer = neat.Checkpointer(1, 999999, "neat-checkpoint-")
+    pop.add_reporter(checkpointer)
 
     winner = pop.run(eval_genomes, 200)
 
@@ -120,5 +127,8 @@ if __name__ == '__main__':
                 print(f"Using config file {CONFIG_PATH}")
             elif sys.argv[i] == "-time":
                 SIMULATION_TIME = float(sys.argv[i+1])
+            elif sys.argv[i] == "-reload":
+                RELOAD_PATH = os.path.join(local_dir, sys.argv[i+1])
+                print(f"Using saved config {RELOAD_PATH}")
 
     run()
