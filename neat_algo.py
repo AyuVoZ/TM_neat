@@ -63,8 +63,8 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-        if FITNESS_TYPE == "CP1":
-            break
+        # if FITNESS_TYPE == "CP1" and get_data.data['curCP']==1:
+        #     break
 
     if FITNESS_TYPE == "Distance":
         fitness = get_data.data['distance']*(get_data.data['curCP']+1)
@@ -106,6 +106,8 @@ def run():
     pop.add_reporter(neat.StdOutReporter(True))
     checkpointer = neat.Checkpointer(1, 999999, "neat-checkpoint-")
     pop.add_reporter(checkpointer)
+    if DEBUG:
+        print(len(pop.population))
 
     winner = pop.run(eval_genomes, 200)
     if DEBUG:
