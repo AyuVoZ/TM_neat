@@ -63,15 +63,18 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
+        if FITNESS_TYPE == "CP1":
+            break
+
     if FITNESS_TYPE == "Distance":
         fitness = get_data.data['distance']*(get_data.data['curCP']+1)
     elif FITNESS_TYPE == "CP1":
         if(get_data.data['curCP']==1):
-            fitness = get_data.data['lastCPTime']
+            fitness = -get_data.data['lastCPTime']+15000
         elif get_data.data['curCP']>1:
-            fitness = get_data.data['lastCPTime']/2
+            fitness = (-get_data.data['lastCPTime']+15000)*2
         else:
-            fitness = SIMULATION_TIME*1000
+            fitness = -SIMULATION_TIME*1000+15000
 
     if DEBUG:
         print(f"[{time.ctime()}] Fitness : {fitness}")
