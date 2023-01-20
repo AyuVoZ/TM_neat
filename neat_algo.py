@@ -23,9 +23,10 @@ get_data.start_thread()
 
 DEBUG = False
 local_dir = os.path.dirname(__file__)
-CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-start-hidden-2')
-SIMULATION_TIME = 20.0
+CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-test')
+SIMULATION_TIME = 8.0
 RELOAD_PATH = None
+FITNESS_TYPE = "Distance"
 
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
@@ -62,9 +63,17 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
-    fitness = get_data.data['distance']*(get_data.data['curCP']+1)
+    if FITNESS_TYPE == "Distance":
+        fitness = get_data.data['distance']*(get_data.data['curCP']+1)
+    elif FITNESS_TYPE == "CP1":
+        if(get_data.data['curCP']==1):
+            fitness = get_data.data['lastCPTime']
+        elif get_data.data['curCP']>1:
+            fitness = get_data.data['lastCPTime']/2
+        else:
+            fitness = SIMULATION_TIME*1000
 
-    if DEBUG: 
+    if DEBUG:
         print(f"[{time.ctime()}] Fitness : {fitness}")
 
     # The genome's fitness is its worst performance across all runs.
@@ -85,7 +94,8 @@ def run():
 
     pop = None
     if(RELOAD_PATH != None):
-        pop = neat.Checkpointer.restore_checkpoint(RELOAD_PATH)
+        popu = neat.Checkpointer.restore_checkpoint(RELOAD_PATH)
+        pop = neat.Population(config, (popu.population, popu.species, popu.generation+1))
     else:
         pop = neat.Population(config)
     stats = neat.StatisticsReporter()
@@ -95,6 +105,8 @@ def run():
     pop.add_reporter(checkpointer)
 
     winner = pop.run(eval_genomes, 200)
+    if DEBUG:
+        print(pop.config.fitness_threshold)
     checkpointer.save_checkpoint(config, pop.population, pop.species, pop.generation)
 
     # Save the winner.
@@ -131,5 +143,7 @@ if __name__ == '__main__':
             elif sys.argv[i] == "-reload":
                 RELOAD_PATH = os.path.join(local_dir, sys.argv[i+1])
                 print(f"Using saved config {RELOAD_PATH}")
+            elif sys.argv[i] == "-fitness":
+                FITNESS_TYPE = sys.argv[i+1]
 
     run()
