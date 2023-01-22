@@ -33,7 +33,7 @@ def start_thread():
 
 if __name__ == "__main__":          
         time.sleep(0.2) # wait for connection
-        start_thread()
+        #start_thread()
 
         while True :
                 #print(data)
