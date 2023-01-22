@@ -15,6 +15,7 @@ def get_data(s):
         data['curCP'] = unpack(b'@f', s.recv(4))[0] # finish
         data['lastCPTime'] = unpack(b'@f', s.recv(4))[0] # finish
         data['curRaceTime'] = unpack(b'@f', s.recv(4))[0] # finish
+        data['posx'] = unpack(b'@f', s.recv(4))[0] #Position x
         return data
 
 # function that captures data from openplanet 
@@ -32,8 +33,9 @@ def start_thread():
 
 if __name__ == "__main__":          
         time.sleep(0.2) # wait for connection
+        start_thread()
 
         while True :
-                #print(data)
+                print(data)
                 pass
                 

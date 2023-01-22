@@ -67,7 +67,7 @@ def eval_genome(genome, config):
         #     break
 
     if FITNESS_TYPE == "Distance":
-        fitness = get_data.data['distance']*(get_data.data['curCP']+1)
+        fitness = -3.42466*get_data.data['posx']+4767.123
     elif FITNESS_TYPE == "CP1":
         if(get_data.data['curCP']==1):
             fitness = -get_data.data['lastCPTime']+15000

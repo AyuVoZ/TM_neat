@@ -60,6 +60,7 @@ void Main()
 				_curCP = 0;
 				_lastCPTime = 0;
 			}
+			//print(api.Position.x);
 
 			// print("Current Race Time");
 			// print(api.CurrentRaceTime);
@@ -80,7 +81,8 @@ void Main()
 
 			send_data_float(sock, _curCP);
 			send_data_float(sock, _lastCPTime);
-			send_data_float(sock, api.CurrentRaceTime);			
+			send_data_float(sock, api.CurrentRaceTime);	
+			send_data_float(sock, api.Position.x)		
 
 			yield();  // this statement stops the script until the next frame
 		}
