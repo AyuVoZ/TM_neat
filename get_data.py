@@ -36,6 +36,6 @@ if __name__ == "__main__":
         start_thread()
 
         while True :
-                print(data)
+                #print(data)
                 pass
                 
