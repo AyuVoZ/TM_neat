@@ -5,7 +5,7 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = 7500
-pop_size              = 200
+pop_size              = 100
 reset_on_extinction   = 0
 
 [DefaultGenome]
@@ -14,9 +14,9 @@ num_hidden              = 2
 num_outputs             = 2
 feed_forward            = True
 compatibility_disjoint_coefficient    = 1.0
-compatibility_weight_coefficient      = 0.6
-conn_add_prob           = 0.3
-conn_delete_prob        = 0.3
+compatibility_weight_coefficient      = 0.5
+conn_add_prob           = 0.5
+conn_delete_prob        = 0.5
 node_add_prob           = 0.3
 node_delete_prob        = 0.3
 initial_connection      = partial_direct 0.5
@@ -28,7 +28,7 @@ aggregation_options     = sum
 aggregation_mutate_rate = 0.0
 bias_init_mean          = 0.0
 bias_init_stdev         = 1.0
-bias_replace_rate       = 0.2
+bias_replace_rate       = 0.1
 bias_mutate_rate        = 0.7
 bias_mutate_power       = 0.5
 bias_max_value          = 30.0
@@ -52,7 +52,7 @@ enabled_default         = True
 enabled_mutate_rate     = 0.01
 
 [DefaultSpeciesSet]
-compatibility_threshold = 3.0
+compatibility_threshold = 2.85
 
 [DefaultStagnation]
 species_fitness_func = max

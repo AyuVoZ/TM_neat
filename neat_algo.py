@@ -75,6 +75,13 @@ def eval_genome(genome, config):
             fitness = (-get_data.data['lastCPTime']+15000)*2
         else:
             fitness = -SIMULATION_TIME*1000+15000
+    elif FITNESS_TYPE == "CP2":
+        if(get_data.data['curCP']==2):
+            fitness = -1.85714*get_data.data['lastCPTime']+37142.86
+        elif get_data.data['curCP']>2:
+            fitness = (-1.85714*get_data.data['lastCPTime']+37142.86)*2
+        else:
+            fitness = 0.0
 
     if DEBUG:
         print(f"[{time.ctime()}] Fitness : {fitness}")
