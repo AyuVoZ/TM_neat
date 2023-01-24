@@ -45,6 +45,7 @@ def eval_genome(genome, config):
     while time.time()-sim_time < SIMULATION_TIME:
         if get_data.data['finish']:
             gamepad.reset()
+            sim_time = 0
             finish = True
         else:
             inputs = lidar.lidar_20(False)
@@ -94,9 +95,9 @@ def eval_genome(genome, config):
             fitness = (-1*get_data.data['lastCPTime']+30000)*2
         else:
             fitness = 0.0
-    elif FITNESS_TYPE == "finish": #objective : 35000, simu_time = 60
+    elif FITNESS_TYPE == "finish": #objective : 26000, simu_time = 45
         if finish:
-            fitness = -1.4*get_data.data['curRaceTime']+84000
+            fitness = -1.36842*get_data.data['curRaceTime']+61578.95
             keyboard.press_and_release("enter")
         else:
             fitness = 0.0
