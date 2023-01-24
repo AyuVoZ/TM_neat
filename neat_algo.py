@@ -40,35 +40,36 @@ def eval_genome(genome, config):
     keyboard.press('delete')
     keyboard.release('delete')
     is_forward = None
-    cp4_crossed = False
+    finish = False
 
     while time.time()-sim_time < SIMULATION_TIME:
-        inputs = lidar.lidar_20(False)
-        speed_raw = get_data.data['speed']
-        speed_raw = speed_raw/200-1
-        speed = np.float32(speed_raw)
-        inputs = np.append(inputs, speed)
-        inputs = np.array(inputs, dtype=np.float32)
-        action = net.activate(inputs)
-        
-        # Apply action to the game
-        if(action[0]>0):
-            if(not is_forward):
-                gamepad.left_trigger_float(value_float=0)
-            is_forward = True
-            gamepad.right_trigger_float(value_float=action[0])
+        if get_data.data['finish']:
+            gamepad.reset()
+            finish = True
         else:
-            if(is_forward):
-                gamepad.right_trigger_float(value_float=0)
-            is_forward= False
-            gamepad.left_trigger_float(value_float=-action[0])
-        gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
-        gamepad.update()
-
-        if not cp4_crossed and get_data.data['curCP']==4:
-            cp4_crossed = True
-        # if FITNESS_TYPE == "CP1" and get_data.data['curCP']==1:
-        #     break
+            inputs = lidar.lidar_20(False)
+            speed_raw = get_data.data['speed']
+            speed_raw = speed_raw/200-1
+            speed = np.float32(speed_raw)
+            inputs = np.append(inputs, speed)
+            inputs = np.array(inputs, dtype=np.float32)
+            action = net.activate(inputs)
+            
+            # Apply action to the game
+            if(action[0]>0):
+                if(not is_forward):
+                    gamepad.left_trigger_float(value_float=0)
+                is_forward = True
+                gamepad.right_trigger_float(value_float=action[0])
+            else:
+                if(is_forward):
+                    gamepad.right_trigger_float(value_float=0)
+                is_forward= False
+                gamepad.left_trigger_float(value_float=-action[0])
+            gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
+            gamepad.update()
+            # if FITNESS_TYPE == "CP1" and get_data.data['curCP']==1:
+            #     break
 
     if FITNESS_TYPE == "Distance": #objective : 750, simu_time = 15
         fitness = -3.42466*get_data.data['posx']+4767.123
@@ -94,8 +95,9 @@ def eval_genome(genome, config):
         else:
             fitness = 0.0
     elif FITNESS_TYPE == "finish": #objective : 35000, simu_time = 60
-        if get_data.data['curCP']==0 and cp4_crossed:
-            fitness = -1.4*get_data.data['lastCPTime']+84000
+        if finish:
+            fitness = -1.4*get_data.data['curRaceTime']+84000
+            keyboard.press_and_release("enter")
         else:
             fitness = 0.0
 
