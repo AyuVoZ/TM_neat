@@ -27,6 +27,7 @@ CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-test')
 SIMULATION_TIME = 8.0
 RELOAD_PATH = None
 FITNESS_TYPE = "Distance"
+REPLAY = False
 
 # Use the NN network phenotype and the discrete actuator force function.
 def eval_genome(genome, config):
@@ -39,6 +40,7 @@ def eval_genome(genome, config):
     keyboard.press('delete')
     keyboard.release('delete')
     is_forward = None
+    cp4_crossed = False
 
     while time.time()-sim_time < SIMULATION_TIME:
         inputs = lidar.lidar_20(False)
@@ -63,25 +65,67 @@ def eval_genome(genome, config):
         gamepad.left_joystick_float(x_value_float=action[1], y_value_float=0)
         gamepad.update()
 
+        if not cp4_crossed and get_data.data['curCP']==4:
+            cp4_crossed = True
         # if FITNESS_TYPE == "CP1" and get_data.data['curCP']==1:
         #     break
 
-    if FITNESS_TYPE == "Distance":
+    if FITNESS_TYPE == "Distance": #objective : 750, simu_time = 15
         fitness = -3.42466*get_data.data['posx']+4767.123
-    elif FITNESS_TYPE == "CP1":
+    elif FITNESS_TYPE == "CP1": #objective : 7500, simu_time = 15
         if(get_data.data['curCP']==1):
             fitness = -get_data.data['lastCPTime']+15000
         elif get_data.data['curCP']>1:
             fitness = (-get_data.data['lastCPTime']+15000)*2
         else:
             fitness = -SIMULATION_TIME*1000+15000
-    elif FITNESS_TYPE == "CP2":
+    elif FITNESS_TYPE == "CP2": #objective : 13000, simu_time = 20
         if(get_data.data['curCP']==2):
             fitness = -1.85714*get_data.data['lastCPTime']+37142.86
         elif get_data.data['curCP']>2:
             fitness = (-1.85714*get_data.data['lastCPTime']+37142.86)*2
         else:
             fitness = 0.0
+    elif FITNESS_TYPE == "CP3": #objecttive : 15000, simu_time = 30
+        if(get_data.data['curCP']==3):
+            fitness = -1*get_data.data['lastCPTime']+30000
+        elif get_data.data['curCP']>3:
+            fitness = (-1*get_data.data['lastCPTime']+30000)*2
+        else:
+            fitness = 0.0
+    elif FITNESS_TYPE == "finish": #objective : 35000, simu_time = 60
+        if get_data.data['curCP']==0 and cp4_crossed:
+            fitness = -1.4*get_data.data['lastCPTime']+84000
+        else:
+            fitness = 0.0
+
+    if REPLAY:
+        get_data.stop_thread()
+        time.sleep(1)
+        gamepad2 = vg.VX360Gamepad()
+        keyboard.press_and_release("r")
+        time.sleep(0.1)
+        gamepad2.left_joystick_float(x_value_float=0, y_value_float=1)
+        gamepad2.update()
+        time.sleep(0.1)
+        gamepad2.reset()
+        del gamepad2
+        keyboard.press_and_release("enter")
+        time.sleep(0.1)
+        keyboard.press_and_release("enter")
+        time.sleep(0.1)
+        keyboard.press_and_release("escape")
+        time.sleep(0.1)
+        gamepad.left_joystick_float(x_value_float=0, y_value_float=1)
+        gamepad.update()
+        time.sleep(0.1)
+        gamepad.reset()
+        time.sleep(0.1)
+        keyboard.press_and_release("enter")
+        time.sleep(1)
+        keyboard.press_and_release("enter")
+        time.sleep(4)
+        get_data.start_thread()
 
     if DEBUG:
         print(f"[{time.ctime()}] Fitness : {fitness}")
@@ -157,5 +201,7 @@ if __name__ == '__main__':
                 print(f"Using saved config {RELOAD_PATH}")
             elif sys.argv[i] == "-fitness":
                 FITNESS_TYPE = sys.argv[i+1]
+            elif sys.argv[i] == "-replay":
+                REPLAY = True
 
     run()

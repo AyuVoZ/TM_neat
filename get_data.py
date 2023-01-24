@@ -4,6 +4,7 @@ import threading
 import time
 
 global data
+global isStopped
 data = {}
 
 def get_data(s):
@@ -23,12 +24,18 @@ def data_getter_function():
         global data
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect(("127.0.0.1", 9000))
-                while True:
+                while not isStopped:
                         data = get_data(s)
         
 def start_thread():
+        global isStopped
+        isStopped = False
         data_getter_thread = threading.Thread(target=data_getter_function, daemon=True)
         data_getter_thread.start()
+
+def stop_thread():
+        global isStopped
+        isStopped = True
 
 
 if __name__ == "__main__":          
