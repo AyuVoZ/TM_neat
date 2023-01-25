@@ -45,7 +45,6 @@ def eval_genome(genome, config):
     while time.time()-sim_time < SIMULATION_TIME:
         if get_data.data['finish']:
             gamepad.reset()
-            sim_time = 0
             finish = True
         else:
             inputs = lidar.lidar_20(False)
