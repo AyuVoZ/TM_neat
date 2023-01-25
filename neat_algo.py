@@ -5,6 +5,7 @@ import neat
 import visualize
 import numpy as np
 import sys
+import gzip
 
 #Control car and environement
 import keyboard
@@ -140,6 +141,21 @@ def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
         genome.fitness = eval_genome(genome, config)
 
+def save_stats(stats,generation):
+        """ Save the current stats. """
+        filename = '{0}{1}'.format("stats-", generation)
+        print("Saving checkpoint to {0}".format(filename))
+
+        with gzip.open(filename, 'w', compresslevel=5) as f:
+            data = (stats)
+            pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+@staticmethod
+def restore_stats(filename):
+    """Restores stats from a previous saved point."""
+    with gzip.open(filename) as f:
+        stats = pickle.load(f)
+        return stats
 
 def run():
     # Load the config file, which is assumed to live in
@@ -166,6 +182,7 @@ def run():
     if DEBUG:
         print(pop.config.fitness_threshold)
     checkpointer.save_checkpoint(config, pop.population, pop.species, pop.generation)
+    save_stats(stats,pop.generation)
 
     # Save the winner.
     with open('winner-feedforward', 'wb') as f:
