@@ -62,11 +62,11 @@ void Main()
 			}
 				
 			// Sending data
-			cc = send_data_float(sock, api.Speed);
-			send_data_float(sock, api.Distance);
+			send_data_float(sock, api.Speed); //Vitesse
+			send_data_float(sock, api.Distance); //Distance parcourue
 			if(race_state == SGamePlaygroundUIConfig::EUISequence::Finish) 
 			{
-				send_data_float(sock, 1.0f);
+				send_data_float(sock, 1.0f); //Envoie 1 si la course est terminée
 			}
 			else send_data_float(sock, 0.0f);
 
