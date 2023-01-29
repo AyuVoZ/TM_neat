@@ -9,24 +9,25 @@ data = {}
 
 def get_data(s):
         data = dict()
-        #data['time'] = time.ctime()
+        #Récupération des données depuis le socket
         data['speed'] = unpack(b'@f', s.recv(4))[0] # speed
         data['distance'] = unpack(b'@f', s.recv(4))[0] # distance
         data['finish'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['curCP'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['lastCPTime'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['curRaceTime'] = unpack(b'@f', s.recv(4))[0] # finish
-        data['posx'] = unpack(b'@f', s.recv(4))[0] #Position x
+        data['curCP'] = unpack(b'@f', s.recv(4))[0] # numéro du CP actuel
+        data['lastCPTime'] = unpack(b'@f', s.recv(4))[0] # temps au dernier CP
+        data['curRaceTime'] = unpack(b'@f', s.recv(4))[0] # temps
+        data['posx'] = unpack(b'@f', s.recv(4))[0] # position x
         return data
 
-# function that captures data from openplanet 
+# Récupération des données 
 def data_getter_function():
         global data
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect(("127.0.0.1", 9000))
                 while not isStopped:
                         data = get_data(s)
-        
+
+# Threading 
 def start_thread():
         global isStopped
         isStopped = False
@@ -37,7 +38,7 @@ def stop_thread():
         global isStopped
         isStopped = True
 
-
+# Debug
 if __name__ == "__main__":          
         time.sleep(0.2) # wait for connection
         #start_thread()
@@ -45,4 +46,3 @@ if __name__ == "__main__":
         while True :
                 #print(data)
                 pass
-                
