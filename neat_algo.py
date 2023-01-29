@@ -22,6 +22,7 @@ gamepad = vg.VX360Gamepad()
 # start the thread
 get_data.start_thread()
 
+#Variables for algorithm
 DEBUG = False
 local_dir = os.path.dirname(__file__)
 CONFIG_PATH = os.path.join(local_dir, 'config-feedforward-test')
@@ -34,7 +35,6 @@ REPLAY = False
 def eval_genome(genome, config):
     net = neat.nn.FeedForwardNetwork.create(genome, config)
 
-    # Run the given simulation for up to num_steps time steps.
     sim_time = time.time()
     fitness = 0.0
     #restart race
@@ -43,20 +43,24 @@ def eval_genome(genome, config):
     is_forward = None
     finish = False
 
+    # Run the given simulation for an amount of time.
     while time.time()-sim_time < SIMULATION_TIME:
+        #if the race is finished
         if get_data.data['finish']:
             gamepad.reset()
             finish = True
         else:
+            #Get the inputs from the Lidars and the speed normalized between -1 and 1
             inputs = lidar.lidar_20(False)
             speed_raw = get_data.data['speed']
             speed_raw = speed_raw/200-1
             speed = np.float32(speed_raw)
             inputs = np.append(inputs, speed)
             inputs = np.array(inputs, dtype=np.float32)
+            #Get the actions
             action = net.activate(inputs)
             
-            # Apply action to the game
+            # Apply action to the game with the gamepad
             if(action[0]>0):
                 if(not is_forward):
                     gamepad.left_trigger_float(value_float=0)
@@ -72,6 +76,7 @@ def eval_genome(genome, config):
             # if FITNESS_TYPE == "CP1" and get_data.data['curCP']==1:
             #     break
 
+    #Calculate the fitness depending on the fitness type
     if FITNESS_TYPE == "Distance": #objective : 750, simu_time = 15
         fitness = -3.42466*get_data.data['posx']+4767.123
     elif FITNESS_TYPE == "CP1": #objective : 7500, simu_time = 15
@@ -102,6 +107,7 @@ def eval_genome(genome, config):
         else:
             fitness = 0.0
 
+    #If we choose to save the replay. We do a list of inputs to save replays in the game
     if REPLAY:
         get_data.stop_thread()
         time.sleep(1)
@@ -136,11 +142,12 @@ def eval_genome(genome, config):
     # The genome's fitness is its worst performance across all runs.
     return fitness
 
-
+#Func to run avery generation
 def eval_genomes(genomes, config):
     for genome_id, genome in genomes:
         genome.fitness = eval_genome(genome, config)
 
+#Func to save stats
 def save_stats(stats,generation):
         """ Save the current stats. """
         filename = '{0}{1}'.format("stats-", generation)
@@ -150,6 +157,7 @@ def save_stats(stats,generation):
             data = (stats)
             pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
+#Func to restore stats
 @staticmethod
 def restore_stats(filename):
     """Restores stats from a previous saved point."""
@@ -165,11 +173,13 @@ def run():
                          CONFIG_PATH)
 
     pop = None
+    #We can reload checkpoint
     if(RELOAD_PATH != None):
         popu = neat.Checkpointer.restore_checkpoint(RELOAD_PATH)
         pop = neat.Population(config, (popu.population, popu.species, popu.generation+1))
     else:
         pop = neat.Population(config)
+    #We add stats and checkpoint recorder
     stats = neat.StatisticsReporter()
     pop.add_reporter(stats)
     pop.add_reporter(neat.StdOutReporter(True))
@@ -202,6 +212,7 @@ def run():
 
 
 if __name__ == '__main__':
+    #We can add args to add debug, simulation time, replay, etc.
     if len(sys.argv) > 1:
         for i in range(1, len(sys.argv)):
             if sys.argv[i] == '-d':
